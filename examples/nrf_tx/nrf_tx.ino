@@ -1,14 +1,26 @@
+/*
+   Copyright (c) 2015 Piotr Stolarz for the Ardiono port
+
+   This software is distributed WITHOUT ANY WARRANTY; without even the
+   implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+   See the License for more information.
+ */
+
 #include <SPI.h>
 #include <nrf_hal.h>
 
+// if 1 - write some info to the serial output
 #define INFO_ON_SERIAL   1
 
+// nRF communication channel (1MHz wide)
 #define CHANNEL     20
 
 // nRF Chip Enable (CE) pin
 #define CE_PIN      9
 // SPI CS (slave select) pin
 #define CS_PIN      10
+// blinking LED pin
+#define LED_PIN     13
 
 #define chip_enable()   digitalWrite(CE_PIN, HIGH)
 #define chip_disable()  digitalWrite(CE_PIN, LOW)
@@ -16,11 +28,21 @@
 static uint8_t tx[NRF_MAX_PL] = {};
 static int cnt = 0;
 
+uint8_t led_val = LOW;
+
+#define toggle_led() \
+    digitalWrite(CE_PIN, (led_val==LOW ? (led_val=HIGH) : (led_val=LOW)))
+
+
 void setup()
 {
     // CE as output
     pinMode(CE_PIN, OUTPUT);
     digitalWrite(CE_PIN, LOW);
+
+    // init LED
+    pinMode(LED_PIN, OUTPUT);
+    digitalWrite(CE_PIN, led_val);
 
 #if INFO_ON_SERIAL
     Serial.begin(115200);
@@ -83,7 +105,10 @@ void loop()
         delayMicroseconds(100);
     }
 
-    if ((irq_flg & (1U<<HAL_NRF_MAX_RT)) || i>=20) {
+    if ((irq_flg & (1U<<HAL_NRF_MAX_RT)) || i>=20)
+    {
+        toggle_led();
+
         hal_nrf_flush_tx();
 #if INFO_ON_SERIAL
         Serial.print("TX timeout\r\n");

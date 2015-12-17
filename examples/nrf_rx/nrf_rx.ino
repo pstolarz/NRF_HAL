@@ -1,12 +1,26 @@
+/*
+   Copyright (c) 2015 Piotr Stolarz for the Ardiono port
+
+   This software is distributed WITHOUT ANY WARRANTY; without even the
+   implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+   See the License for more information.
+ */
+
 #include <SPI.h>
 #include <nrf_hal.h>
 
+// if 1 - write some info to the serial output
+#define INFO_ON_SERIAL   1
+
+// nRF communication channel (1MHz wide)
 #define CHANNEL     20
 
 // nRF Chip Enable (CE) pin
 #define CE_PIN      9
 // SPI CS (slave select) pin
 #define CS_PIN      10
+// blinking LED pin
+#define LED_PIN     13
 
 #define chip_enable()   digitalWrite(CE_PIN, HIGH)
 #define chip_disable()  digitalWrite(CE_PIN, LOW)
@@ -14,13 +28,25 @@
 static uint8_t rx[NRF_MAX_PL] = {};
 static int cnt = 0;
 
+uint8_t led_val = LOW;
+
+#define toggle_led() \
+    digitalWrite(CE_PIN, (led_val==LOW ? (led_val=HIGH) : (led_val=LOW)))
+
+
 void setup()
 {
     // CE as output
     pinMode(CE_PIN, OUTPUT);
     digitalWrite(CE_PIN, LOW);
 
+    // init LED
+    pinMode(LED_PIN, OUTPUT);
+    digitalWrite(CE_PIN, led_val);
+
+#if INFO_ON_SERIAL
     Serial.begin(115200);
+#endif
 
     // SPI init
     SPI.begin();
@@ -31,6 +57,7 @@ void setup()
 
     restart_rx();
 
+#if INFO_ON_SERIAL
     uint8_t addr[5];
     char sp_buf[48];
 
@@ -40,6 +67,7 @@ void setup()
     Serial.print(sp_buf);
 
     Serial.print("Tuned up, waiting for messages...\r\n");
+#endif
 }
 
 /* RX loop */
@@ -53,11 +81,15 @@ void loop()
         /* read RX FIFO of received messages */
         while(!hal_nrf_rx_fifo_empty())
         {
+            toggle_led();
+
             hal_nrf_read_rx_payload(rx);
             if (rx[0]==0xAB) {
+#if INFO_ON_SERIAL
                 Serial.print("Received: \"");
                 Serial.print((const char *)&rx[1]);
                 Serial.print("\r\n");
+#endif
             }
             hal_nrf_flush_rx();
             cnt = 0;
