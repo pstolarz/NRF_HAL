@@ -20,18 +20,17 @@
 // SPI CS (slave select) pin
 #define CS_PIN      10
 // blinking LED pin
-#define LED_PIN     13
+#define LED_PIN     8
 
 #define chip_enable()   digitalWrite(CE_PIN, HIGH)
 #define chip_disable()  digitalWrite(CE_PIN, LOW)
 
 static uint8_t rx[NRF_MAX_PL] = {};
 static int cnt = 0;
-
-uint8_t led_val = LOW;
+static uint8_t led_val = LOW;
 
 #define toggle_led() \
-    digitalWrite(CE_PIN, (led_val==LOW ? (led_val=HIGH) : (led_val=LOW)))
+    digitalWrite(LED_PIN, (led_val==LOW ? (led_val=HIGH) : (led_val=LOW)))
 
 
 void setup()
@@ -42,7 +41,7 @@ void setup()
 
     // init LED
     pinMode(LED_PIN, OUTPUT);
-    digitalWrite(CE_PIN, led_val);
+    digitalWrite(LED_PIN, led_val);
 
 #if INFO_ON_SERIAL
     Serial.begin(115200);
@@ -81,10 +80,10 @@ void loop()
         /* read RX FIFO of received messages */
         while(!hal_nrf_rx_fifo_empty())
         {
-            toggle_led();
-
             hal_nrf_read_rx_payload(rx);
-            if (rx[0]==0xAB) {
+            if (rx[0]==0xAB)
+            {
+                toggle_led();
 #if INFO_ON_SERIAL
                 Serial.print("Received: \"");
                 Serial.print((const char *)&rx[1]);
