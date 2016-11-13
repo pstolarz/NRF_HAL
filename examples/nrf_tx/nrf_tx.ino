@@ -78,6 +78,7 @@ void loop()
 {
     int i;
     uint8_t irq_flg;
+    char ibuf[10];
 
     hal_nrf_set_power_mode(HAL_NRF_PWR_UP);
     delayMicroseconds(1500);
@@ -87,7 +88,8 @@ void loop()
     init_tx();
 
     tx[0] = 0xAB;   // magic
-    sprintf((char *)&tx[1], "ard-msg no. %d", cnt);
+    sprintf(ibuf, "%d", cnt);
+    sprintf((char *)&tx[1], "ard-msg no. %s", ibuf);
     hal_nrf_write_tx_payload(tx, sizeof(tx));
 
     hal_nrf_get_clear_irq_flags();
