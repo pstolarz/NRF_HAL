@@ -87,10 +87,9 @@ void loop()
 #if INFO_ON_SERIAL
                 Serial.print("Received: \"");
                 Serial.print((const char *)&rx[1]);
-                Serial.print("\r\n");
+                Serial.print("\"\r\n");
 #endif
             }
-            hal_nrf_flush_rx();
             cnt = 0;
         }
     }
