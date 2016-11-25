@@ -1,5 +1,5 @@
 /*
-   Copyright (c) 2015 Piotr Stolarz for the Ardiono port
+   Copyright (c) 2015,2016 Piotr Stolarz for the Ardiono port
 
    This software is distributed WITHOUT ANY WARRANTY; without even the
    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
