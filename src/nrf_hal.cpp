@@ -33,7 +33,8 @@ static int cs_pin = CS_PIN_DEFAULT;
 #define cs_disable() digitalWrite(cs_pin, HIGH)
 
 static uint8_t hal_nrf_write_reg(uint8_t reg, uint8_t value);
-static uint16_t hal_nrf_read_multibyte_reg(uint8_t reg, uint8_t *pbuf);
+static uint16_t
+    hal_nrf_read_multibyte_reg(uint8_t reg, uint8_t *pbuf, uint8_t len);
 static void hal_nrf_write_multibyte_reg(
     uint8_t reg, const uint8_t *pbuf, uint8_t length);
 
@@ -386,7 +387,7 @@ uint8_t hal_nrf_get_address(uint8_t address, uint8_t *addr)
     case HAL_NRF_PIPE0:
     case HAL_NRF_PIPE1:
     case HAL_NRF_TX:
-        return (uint8_t)hal_nrf_read_multibyte_reg(address, addr);
+        return (uint8_t)hal_nrf_read_multibyte_reg(address, addr, 0);
     default:
         *addr = hal_nrf_read_reg(RX_ADDR_P0 + address);
         return 1;
@@ -589,7 +590,7 @@ uint8_t hal_nrf_read_rx_payload_width(void)
 
 uint16_t hal_nrf_read_rx_payload(uint8_t *rx_pload)
 {
-    return hal_nrf_read_multibyte_reg((uint8_t)HAL_NRF_RX_PLOAD, rx_pload);
+    return hal_nrf_read_multibyte_reg((uint8_t)HAL_NRF_RX_PLOAD, rx_pload, 0);
 }
 
 void hal_nrf_write_tx_payload(const uint8_t *tx_pload, uint8_t length)
@@ -688,6 +689,45 @@ uint8_t hal_nrf_read_reg(uint8_t reg)
 /* Static functions go below
  */
 
+void hal_nrf_save_ctx(hal_nrf_ctx_t *p_ctx)
+{
+    memset(p_ctx, 0, sizeof(*p_ctx));
+
+    p_ctx->config     = hal_nrf_read_reg(CONFIG);
+    p_ctx->en_aa      = hal_nrf_read_reg(EN_AA);
+    p_ctx->en_rxaddr  = hal_nrf_read_reg(EN_RXADDR);
+    p_ctx->setup_aw   = hal_nrf_read_reg(SETUP_AW);
+    p_ctx->setup_retr = hal_nrf_read_reg(SETUP_RETR);
+    p_ctx->rf_ch      = hal_nrf_read_reg(RF_CH);
+    p_ctx->rf_setup   = hal_nrf_read_reg(RF_SETUP);
+
+    hal_nrf_read_multibyte_reg(
+        HAL_NRF_PIPE0, p_ctx->rx_addr_p0, sizeof(p_ctx->rx_addr_p0));
+
+    hal_nrf_read_multibyte_reg(
+        HAL_NRF_PIPE1, p_ctx->rx_addr_p1, sizeof(p_ctx->rx_addr_p1));
+
+    p_ctx->rx_addr_p2 = hal_nrf_read_reg(RX_ADDR_P2);
+    p_ctx->rx_addr_p3 = hal_nrf_read_reg(RX_ADDR_P3);
+    p_ctx->rx_addr_p4 = hal_nrf_read_reg(RX_ADDR_P4);
+    p_ctx->rx_addr_p5 = hal_nrf_read_reg(RX_ADDR_P5);
+
+    hal_nrf_read_multibyte_reg(
+        HAL_NRF_TX, p_ctx->tx_addr, sizeof(p_ctx->tx_addr));
+
+    p_ctx->rx_pw_p0   = hal_nrf_read_reg(RX_PW_P0);
+    p_ctx->rx_pw_p1   = hal_nrf_read_reg(RX_PW_P1);
+    p_ctx->rx_pw_p2   = hal_nrf_read_reg(RX_PW_P2);
+    p_ctx->rx_pw_p3   = hal_nrf_read_reg(RX_PW_P3);
+    p_ctx->rx_pw_p4   = hal_nrf_read_reg(RX_PW_P4);
+    p_ctx->rx_pw_p5   = hal_nrf_read_reg(RX_PW_P5);
+    p_ctx->dynpd      = hal_nrf_read_reg(DYNPD);
+    p_ctx->feature    = hal_nrf_read_reg(FEATURE);
+
+finish:
+    return;
+}
+
 /**
  * Basis function write_reg.
  *
@@ -716,12 +756,14 @@ static uint8_t hal_nrf_write_reg(uint8_t reg, uint8_t value)
  *
  * @param reg Multibyte register to read from.
  * @param *pbuf Pointer to buffer in which to store read bytes to.
+ * @param len Expected response length. If 0: length selected automatically.
  * @return pipe # of received data (MSB), if operation used by
  * hal_nrf_read_rx_payload().
  * @return length of read data (LSB), either for hal_nrf_read_rx_payload() or
  * for hal_nrf_get_address().
  */
-static uint16_t hal_nrf_read_multibyte_reg(uint8_t reg, uint8_t *pbuf)
+static uint16_t
+    hal_nrf_read_multibyte_reg(uint8_t reg, uint8_t *pbuf, uint8_t len)
 {
     uint8_t length;
     uint8_t buf[NRF_MAX_PL+1];
@@ -731,7 +773,7 @@ static uint16_t hal_nrf_read_multibyte_reg(uint8_t reg, uint8_t *pbuf)
     case HAL_NRF_PIPE0:
     case HAL_NRF_PIPE1:
     case HAL_NRF_TX:
-        length = hal_nrf_get_address_width();
+        length = (!len ? hal_nrf_get_address_width() : len);
         buf[0] = RX_ADDR_P0+reg;
         break;
 
@@ -739,10 +781,10 @@ static uint16_t hal_nrf_read_multibyte_reg(uint8_t reg, uint8_t *pbuf)
         reg = hal_nrf_get_rx_data_source();
 
         if (reg < 7) {
-            length = hal_nrf_read_rx_payload_width();
+            length = (!len ? hal_nrf_read_rx_payload_width() : len);
             buf[0] = R_RX_PAYLOAD;
-        }
-        else length = 0;
+        } else
+            length = 0;
         break;
 
     default:
