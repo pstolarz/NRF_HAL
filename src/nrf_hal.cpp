@@ -686,9 +686,6 @@ uint8_t hal_nrf_read_reg(uint8_t reg)
     return buf[1];
 }
 
-/* Static functions go below
- */
-
 void hal_nrf_save_ctx(hal_nrf_ctx_t *p_ctx)
 {
     memset(p_ctx, 0, sizeof(*p_ctx));
@@ -724,9 +721,11 @@ void hal_nrf_save_ctx(hal_nrf_ctx_t *p_ctx)
     p_ctx->dynpd      = hal_nrf_read_reg(DYNPD);
     p_ctx->feature    = hal_nrf_read_reg(FEATURE);
 
-finish:
     return;
 }
+
+/* Static functions go below
+ */
 
 /**
  * Basis function write_reg.
