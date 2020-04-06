@@ -51,6 +51,12 @@ void loop()
     int i;
     bool eol=false;
 
+    Serial.print("Scanning starts at ");
+    Serial.print(CHANNEL_START, DEC);
+    Serial.print(" , ends at ");
+    Serial.print(CHANNEL_STOP, DEC);
+    Serial.println(" channel...");
+
     for (int ch=CHANNEL_START; ch<=CHANNEL_STOP; ch++)
     {
         if (eol) Serial.println();
