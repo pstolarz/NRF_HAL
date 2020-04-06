@@ -11,10 +11,10 @@
     ],
     "repository": {
         "type": "git",
-        "url": "https://github.com/pstolarz/nrfhal_arduino"
+        "url": "https://github.com/pstolarz/NRF_HAL"
     },
     "version": "1.0.1",
-    "homepage": "https://github.com/pstolarz/nrfhal_arduino",
+    "homepage": "https://github.com/pstolarz/NRF_HAL",
     "frameworks": "Arduino",
     "examples": [
         "examples/*/*.ino"
