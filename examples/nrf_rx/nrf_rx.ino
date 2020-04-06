@@ -37,7 +37,7 @@ void setup()
 {
     // CE as output
     pinMode(CE_PIN, OUTPUT);
-    digitalWrite(CE_PIN, LOW);
+    chip_disable()
 
     // init LED
     pinMode(LED_PIN, OUTPUT);
@@ -61,11 +61,11 @@ void setup()
     char sp_buf[48];
 
     hal_nrf_get_address(HAL_NRF_PIPE0, addr);
-    sprintf(sp_buf, "P0 addr: %02x:%02x:%02x:%02x:%02x\r\n",
+    sprintf(sp_buf, "P0 addr: %02x:%02x:%02x:%02x:%02x",
         addr[0], addr[1], addr[2], addr[3], addr[4]);
-    Serial.print(sp_buf);
+    Serial.println(sp_buf);
 
-    Serial.print("Tuned up, waiting for messages...\r\n");
+    Serial.println("Tuned up, waiting for messages...");
 #endif
 }
 
@@ -75,10 +75,10 @@ void loop()
     uint8_t irq_flg;
 
     irq_flg = hal_nrf_get_clear_irq_flags();
-    if(irq_flg & (1U<<HAL_NRF_RX_DR))
+    if (irq_flg & (1U<<HAL_NRF_RX_DR))
     {
         /* read RX FIFO of received messages */
-        while(!hal_nrf_rx_fifo_empty())
+        while (!hal_nrf_rx_fifo_empty())
         {
             hal_nrf_read_rx_payload(rx);
             if (rx[0]==0xAB)
@@ -87,7 +87,7 @@ void loop()
 #if INFO_ON_SERIAL
                 Serial.print("Received: \"");
                 Serial.print((const char *)&rx[1]);
-                Serial.print("\"\r\n");
+                Serial.println("\"");
 #endif
             }
             cnt = 0;

@@ -37,7 +37,7 @@ void setup()
 {
     // CE as output
     pinMode(CE_PIN, OUTPUT);
-    digitalWrite(CE_PIN, LOW);
+    chip_disable();
 
     // init LED
     pinMode(LED_PIN, OUTPUT);
@@ -61,14 +61,14 @@ void setup()
     char sp_buf[48];
 
     hal_nrf_get_address(HAL_NRF_PIPE0, addr);
-    sprintf(sp_buf, "P0 addr: %02x:%02x:%02x:%02x:%02x\r\n",
+    sprintf(sp_buf, "P0 addr: %02x:%02x:%02x:%02x:%02x",
         addr[0], addr[1], addr[2], addr[3], addr[4]);
-    Serial.print(sp_buf);
+    Serial.println(sp_buf);
 
     hal_nrf_get_address(HAL_NRF_TX, addr);
-    sprintf(sp_buf, "TX addr: %02x:%02x:%02x:%02x:%02x\r\n",
+    sprintf(sp_buf, "TX addr: %02x:%02x:%02x:%02x:%02x",
         addr[0], addr[1], addr[2], addr[3], addr[4]);
-    Serial.print(sp_buf);
+    Serial.println(sp_buf);
 #endif
 }
 
@@ -110,14 +110,14 @@ void loop()
     {
         hal_nrf_flush_tx();
 #if INFO_ON_SERIAL
-        Serial.print("TX timeout\r\n");
+        Serial.println("TX timeout");
 #endif
     } else {
         toggle_led();
 #if INFO_ON_SERIAL
         Serial.print("Sent message no. ");
         Serial.print(cnt, DEC);
-        Serial.print("\r\n");
+        Serial.println();
 #endif
     }
 
