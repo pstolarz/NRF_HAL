@@ -13,7 +13,7 @@
 #include <SPI.h>
 #include <nrf_hal.h>
 
-// first and last channels to scan
+// first and last channel to scan
 #define CHANNEL_START   0
 #define CHANNEL_STOP    127
 

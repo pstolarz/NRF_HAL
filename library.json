@@ -13,7 +13,7 @@
         "type": "git",
         "url": "https://github.com/pstolarz/NRF_HAL"
     },
-    "version": "1.0.1",
+    "version": "1.0.2",
     "homepage": "https://github.com/pstolarz/NRF_HAL",
     "frameworks": "Arduino",
     "examples": [
