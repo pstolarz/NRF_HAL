@@ -13,12 +13,11 @@ functions performing basic actions on the transceiver (like opening an RX pipe,
 setting TX/RX addresses, setting TX output power, checking various statuses,
 reading/writing payload etc.)
 
-See `./src/nrf_hal.h` header file for the API specification and `./examples` for
-some examples.
+See [`src/nrf_hal.h`](src/nrf_hal.h) header file for the API specification and
+[`examples`](examples) for some examples.
 
-Looking for NRF HAL API port for Raspberry PI, check out `librasp` library:
-
-https://github.com/pstolarz/librasp
+Looking for NRF HAL API port for Raspberry PI, check out [librasp](https://github.com/pstolarz/librasp)
+library.
 
 License
 -------
