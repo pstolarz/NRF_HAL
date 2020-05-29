@@ -37,7 +37,7 @@ void setup()
 {
     // CE as output
     pinMode(CE_PIN, OUTPUT);
-    chip_disable()
+    chip_disable();
 
     // init LED
     pinMode(LED_PIN, OUTPUT);
