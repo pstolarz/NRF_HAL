@@ -23,3 +23,4 @@ License
 -------
 
 Nordic Semiconductor Standard Software Development Kit License Agreement
+(license #1 in the enclosed [LICENSE](LICENSE) file)
