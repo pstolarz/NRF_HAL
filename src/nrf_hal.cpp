@@ -331,7 +331,7 @@ finish:
     return;
 }
 
-uint8_t hal_nrf_get_pipe_status(uint8_t pipe_num)
+uint8_t hal_nrf_get_pipe_status(hal_nrf_address_t pipe_num)
 {
     uint8_t en_rxaddr, en_aa;
     uint8_t en_rx_r=0, en_aa_r=0;
@@ -357,9 +357,9 @@ uint8_t hal_nrf_get_address_width(void)
     return (uint8_t)(hal_nrf_read_reg(SETUP_AW)+2);
 }
 
-void hal_nrf_set_address(const hal_nrf_address_t address, const uint8_t *addr)
+void hal_nrf_set_address(const hal_nrf_address_t pipe_num, const uint8_t *addr)
 {
-    switch(address)
+    switch(pipe_num)
     {
     case HAL_NRF_TX:
     case HAL_NRF_PIPE0:
@@ -380,9 +380,9 @@ void hal_nrf_set_address(const hal_nrf_address_t address, const uint8_t *addr)
     }
 }
 
-uint8_t hal_nrf_get_address(uint8_t address, uint8_t *addr)
+uint8_t hal_nrf_get_address(hal_nrf_address_t pipe_num, uint8_t *addr)
 {
-    switch (address)
+    switch (pipe_num)
     {
     case HAL_NRF_PIPE0:
     case HAL_NRF_PIPE1:
@@ -660,7 +660,7 @@ bool hal_nrf_get_pll_mode(void)
     return ((hal_nrf_read_reg(RF_SETUP) & (uint8_t)BIT(PLL_LOCK)) != 0);
 }
 
-void hal_nrf_enable_continious_wave(bool enable)
+void hal_nrf_enable_continuous_wave(bool enable)
 {
     uint8_t rf_setup = hal_nrf_read_reg(RF_SETUP);
 
@@ -672,7 +672,7 @@ void hal_nrf_enable_continious_wave(bool enable)
     hal_nrf_write_reg(RF_SETUP, rf_setup);
 }
 
-bool hal_nrf_is_continious_wave_enabled(void)
+bool hal_nrf_is_continuous_wave_enabled(void)
 {
     return ((hal_nrf_read_reg(RF_SETUP) & (uint8_t)BIT(CONT_WAVE)) != 0);
 }
