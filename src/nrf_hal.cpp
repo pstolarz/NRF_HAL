@@ -365,13 +365,13 @@ void hal_nrf_set_address(const hal_nrf_address_t pipe_num, const uint8_t *addr)
     case HAL_NRF_PIPE0:
     case HAL_NRF_PIPE1:
         hal_nrf_write_multibyte_reg(W_REGISTER+RX_ADDR_P0+
-            (uint8_t)address, addr, hal_nrf_get_address_width());
+            (uint8_t)pipe_num, addr, hal_nrf_get_address_width());
       break;
     case HAL_NRF_PIPE2:
     case HAL_NRF_PIPE3:
     case HAL_NRF_PIPE4:
     case HAL_NRF_PIPE5:
-        hal_nrf_write_reg(RX_ADDR_P0 + (uint8_t)address, *addr);
+        hal_nrf_write_reg(RX_ADDR_P0 + (uint8_t)pipe_num, *addr);
         break;
 
     case HAL_NRF_ALL:
@@ -387,9 +387,9 @@ uint8_t hal_nrf_get_address(hal_nrf_address_t pipe_num, uint8_t *addr)
     case HAL_NRF_PIPE0:
     case HAL_NRF_PIPE1:
     case HAL_NRF_TX:
-        return (uint8_t)hal_nrf_read_multibyte_reg(address, addr, 0);
+        return (uint8_t)hal_nrf_read_multibyte_reg(pipe_num, addr, 0);
     default:
-        *addr = hal_nrf_read_reg(RX_ADDR_P0 + address);
+        *addr = hal_nrf_read_reg(RX_ADDR_P0 + pipe_num);
         return 1;
     }
 }
