@@ -9,7 +9,7 @@
  * the file.
  */
 /*
-   Copyright (c) 2015,2016,2020 Piotr Stolarz for the Ardiono port
+   Copyright (c) 2015,2016,2020,2023 Piotr Stolarz for the Ardiono port
 
    This software is distributed WITHOUT ANY WARRANTY; without even the
    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -126,9 +126,12 @@ void hal_nrf_setup_dynamic_payload(uint8_t setup)
 }
 
 void hal_nrf_write_ack_payload(
-    uint8_t pipe, const uint8_t *tx_pload, uint8_t length)
+    hal_nrf_address_t pipe_num, const uint8_t *tx_pload, uint8_t length)
 {
-    hal_nrf_write_multibyte_reg(W_ACK_PAYLOAD | pipe, tx_pload, length);
+    if (pipe_num<=HAL_NRF_PIPE5) {
+        hal_nrf_write_multibyte_reg(
+            W_ACK_PAYLOAD | (uint8_t)pipe_num, tx_pload, length);
+    }
 }
 
 void hal_nrf_set_rf_channel(uint8_t channel)
@@ -239,14 +242,15 @@ uint16_t hal_nrf_get_auto_retr_delay(void)
     return (uint16_t)((((hal_nrf_read_reg(SETUP_RETR)>>4) & 0x0f)+1)*250);
 }
 
-void hal_nrf_set_rx_payload_width(uint8_t pipe_num, uint8_t pload_width)
+void hal_nrf_set_rx_payload_width(
+    hal_nrf_address_t pipe_num, uint8_t pload_width)
 {
-    hal_nrf_write_reg(RX_PW_P0+pipe_num, pload_width);
+    hal_nrf_write_reg(RX_PW_P0+(uint8_t)pipe_num, pload_width);
 }
 
-uint8_t hal_nrf_get_rx_payload_width(uint8_t pipe_num)
+uint8_t hal_nrf_get_rx_payload_width(hal_nrf_address_t pipe_num)
 {
-    return hal_nrf_read_reg(RX_PW_P0+pipe_num);
+    return hal_nrf_read_reg(RX_PW_P0+(uint8_t)pipe_num);
 }
 
 void hal_nrf_open_pipe(hal_nrf_address_t pipe_num, bool auto_ack)
@@ -339,7 +343,7 @@ uint8_t hal_nrf_get_pipe_status(hal_nrf_address_t pipe_num)
     en_rxaddr = hal_nrf_read_reg(EN_RXADDR);
     en_aa = hal_nrf_read_reg(EN_AA);
 
-    if (pipe_num<=5) {
+    if (pipe_num<=HAL_NRF_PIPE5) {
         en_rx_r = (en_rxaddr & (uint8_t)BIT((int)pipe_num)) !=0;
         en_aa_r = (en_aa & (uint8_t)BIT((int)pipe_num)) !=0;
     }
@@ -357,7 +361,7 @@ uint8_t hal_nrf_get_address_width(void)
     return (uint8_t)(hal_nrf_read_reg(SETUP_AW)+2);
 }
 
-void hal_nrf_set_address(const hal_nrf_address_t pipe_num, const uint8_t *addr)
+void hal_nrf_set_address(hal_nrf_address_t pipe_num, const uint8_t *addr)
 {
     switch(pipe_num)
     {
@@ -402,7 +406,7 @@ void hal_nrf_config_rx_pipe(hal_nrf_address_t pipe_num,
     if (addr) {
         hal_nrf_set_address(pipe_num, addr);
     }
-    hal_nrf_set_rx_payload_width((uint8_t)pipe_num, pload_width);
+    hal_nrf_set_rx_payload_width(pipe_num, pload_width);
 }
 
 void hal_nrf_config_tx(const uint8_t *addr,

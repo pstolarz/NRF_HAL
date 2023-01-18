@@ -9,7 +9,7 @@
  * the file.
  */
 /*
-   Copyright (c) 2015,2016 Piotr Stolarz for the Arduino port
+   Copyright (c) 2015,2016,2023 Piotr Stolarz for the Arduino port
 
    This software is distributed WITHOUT ANY WARRANTY; without even the
    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -366,12 +366,12 @@ void hal_nrf_setup_dynamic_payload(uint8_t setup);
  *
  * Writes the payload that will be transmitted with the ACK on a given pipe.
  *
- * @param pipe Pipe that transmits the payload.
+ * @param pipe_num Pipe that transmits the payload.
  * @param tx_pload Pointer to the payload data.
  * @param length Size of the data to transmit.
  */
 void hal_nrf_write_ack_payload(
-    uint8_t pipe, const uint8_t *tx_pload, uint8_t length);
+    hal_nrf_address_t pipe_num, const uint8_t *tx_pload, uint8_t length);
 
 /**
  * Set radio's RF channel.
@@ -528,7 +528,7 @@ uint8_t hal_nrf_get_address_width(void);
  * @param pipe_num Which address to set.
  * @param *addr Buffer from which the address is stored in.
  */
-void hal_nrf_set_address(const hal_nrf_address_t pipe_num, const uint8_t *addr);
+void hal_nrf_set_address(hal_nrf_address_t pipe_num, const uint8_t *addr);
 
 /**
  * Get address for selected pipe.

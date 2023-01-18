@@ -1,5 +1,5 @@
 /*
-   Copyright (c) 2020 Piotr Stolarz for the Ardiono port
+   Copyright (c) 2020,2023 Piotr Stolarz for the Ardiono port
 
    This software is distributed WITHOUT ANY WARRANTY; without even the
    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -50,12 +50,12 @@ void setup()
 
     hal_nrf_set_operation_mode(HAL_NRF_PTX);
 
-    hal_nrf_enable_continious_wave(true);
+    hal_nrf_enable_continuous_wave(true);
     hal_nrf_set_pll_mode(true);
     hal_nrf_set_output_power(HAL_NRF_0DBM);
     hal_nrf_set_rf_channel(CHANNEL);
 
-    assert(hal_nrf_is_continious_wave_enabled() &&
+    assert(hal_nrf_is_continuous_wave_enabled() &&
         hal_nrf_get_pll_mode() &&
         (hal_nrf_get_output_power()==HAL_NRF_0DBM) &&
         (hal_nrf_get_rf_channel()==CHANNEL));
