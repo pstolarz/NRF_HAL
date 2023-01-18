@@ -1,15 +1,15 @@
 /* Copyright (c) 2009 Nordic Semiconductor. All Rights Reserved.
  *
  * The information contained herein is confidential property of Nordic
- * Semiconductor ASA.Terms and conditions of usage are described in detail
- * in NORDIC SEMICONDUCTOR STANDARD SOFTWARE LICENSE AGREEMENT.
+ * Semiconductor ASA. Terms and conditions of usage are described in
+ * detail in NORDIC SEMICONDUCTOR STANDARD SOFTWARE LICENSE AGREEMENT.
  *
  * Licensees are granted free, non-transferable use of the information. NO
  * WARRENTY of ANY KIND is provided. This heading must NOT be removed from
  * the file.
  */
 /*
-   Copyright (c) 2015,2016 Piotr Stolarz for the Ardiono port
+   Copyright (c) 2015,2016 Piotr Stolarz for the Arduino port
 
    This software is distributed WITHOUT ANY WARRANTY; without even the
    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -21,7 +21,7 @@
  * Note the SPI interface must be initialized before using the NRF HAL API.
  *
  * The differences are:
- * 1. Addition of hal_nrf_set_cs_pin() function, which need to be called at
+ * 1. Addition of hal_nrf_set_cs_pin() function, which needs to be called at
  *    first (before any other NRF HALL API call) to set the SPI CS pin number.
  * 2. Added new functions, mostly getters for already existing setters.
  */
@@ -44,7 +44,7 @@
  * the transceiver. The radio transceiver HAL hides this register map and the
  * usage of the internal SPI.
  *
- * This HAL module contains setup functions for configurating the radio;
+ * This HAL module contains setup functions for configuring the radio;
  * operation functions for controlling the radio when active and for sending
  * and receiving data; and test functions for setting the radio in test modes.
  */
@@ -457,7 +457,8 @@ uint16_t hal_nrf_get_auto_retr_delay(void);
  * @param pipe_num Pipe number to set payload width for.
  * @param pload_width number of bytes expected.
  */
-void hal_nrf_set_rx_payload_width(uint8_t pipe_num, uint8_t pload_width);
+void hal_nrf_set_rx_payload_width(
+     hal_nrf_address_t pipe_num, uint8_t pload_width);
 
 /**
  * Get RX payload width for selected pipe.
@@ -467,7 +468,7 @@ void hal_nrf_set_rx_payload_width(uint8_t pipe_num, uint8_t pload_width);
  * @param pipe_num Pipe number to get payload width for.
  * @return Payload_Width in bytes.
  */
-uint8_t hal_nrf_get_rx_payload_width(uint8_t pipe_num);
+uint8_t hal_nrf_get_rx_payload_width(hal_nrf_address_t pipe_num);
 
 /**
  * Open radio pipe and enable/disable auto acknowledge.
@@ -499,7 +500,7 @@ void hal_nrf_close_pipe(hal_nrf_address_t pipe_num);
  * @retval 0x01 Pipe is open, autoack disabled,
  * @retval 0x03 Pipe is open, autoack enabled.
  */
-uint8_t hal_nrf_get_pipe_status(uint8_t pipe_num);
+uint8_t hal_nrf_get_pipe_status(hal_nrf_address_t pipe_num);
 
 /**
  * Set radio's address width.
@@ -524,22 +525,22 @@ uint8_t hal_nrf_get_address_width(void);
  * Use this function to set a RX address, or to set the TX address. Beware of
  * the difference for single and multibyte address registers.
  *
- * @param address Which address to set.
+ * @param pipe_num Which address to set.
  * @param *addr Buffer from which the address is stored in.
  */
-void hal_nrf_set_address(const hal_nrf_address_t address, const uint8_t *addr);
+void hal_nrf_set_address(const hal_nrf_address_t pipe_num, const uint8_t *addr);
 
 /**
  * Get address for selected pipe.
  *
  * Use this function to get address for selected pipe.
  *
- * @param address Which address to get, Pipe- or TX-address.
+ * @param pipe_num Which address to get, Pipe- or TX-address.
  * @param *addr buffer in which address bytes are written. For pipes containing
  * only LSB byte of address, this byte is returned in the *addr buffer.
  * @return Numbers of bytes copied to addr
  */
-uint8_t hal_nrf_get_address(uint8_t address, uint8_t *addr);
+uint8_t hal_nrf_get_address(hal_nrf_address_t pipe_num, uint8_t *addr);
 
 /**
  * Configures pipe for transmission by:
@@ -887,12 +888,12 @@ bool hal_nrf_get_pll_mode(void);
  *
  * @param enable Enable continuous carrier.
  */
-void hal_nrf_enable_continious_wave(bool enable);
+void hal_nrf_enable_continuous_wave(bool enable);
 
 /**
  * Check if continuous carrier transmit is enabled.
  */
-bool hal_nrf_is_continious_wave_enabled(void);
+bool hal_nrf_is_continuous_wave_enabled(void);
 
 /*
  * Auxiliary functions prototypes
